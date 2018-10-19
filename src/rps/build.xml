@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="rps" default="war" basedir=".">
+
+    <property file="${basedir}/build.properties"/>
+  
+    <property name="jrs.home" value="${basedir}/.."/>
+    <property name="lib" value="${basedir}/lib"/>
+    <property name="src" value="${basedir}/src"/>
+    <property name="build" value="${basedir}/build"/>
+
+    <!--
+        Clear the build artifacts.
+    -->
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
+
+    <!--
+        Compile the RPS classes and copy any non-java files into the appropriate
+        packages under the build/classes/ directory.
+    -->
+    <target name="compile">
+
+        <mkdir dir="${build}/classes"/>
+
+        <javac srcdir="${src}/java" 
+               destdir="${build}/classes" 
+               debug="on" deprecation="off" source="1.4">
+            <classpath>
+                <pathelement location="${jrs.home}/lib/jrs.jar"/>
+                <pathelement location="${lib}/swing-layout-0.9.jar"/>
+                <pathelement location="${lib}/j2ee.jar"/>
+            </classpath>
+        </javac>
+
+        <copy todir="${build}/classes">
+            <fileset dir="${src}/java">
+                <include name="**/*.png"/>
+            </fileset>
+        </copy>
+        
+    </target>
+
+    <!--
+        Create the rps-applet.jar file.
+    -->
+    <target name="jar" depends="compile">
+        
+        <mkdir dir="${build}/lib"/>
+        <mkdir dir="${build}/tmp"/>
+        
+        <!-- rps-applet.jar -->
+        <manifest file="${build}/tmp/rps-applet_jar-MANIFEST.MF">
+            <attribute name="Manifest-Version" value="1.0"/>
+            <attribute name="Class-Path" value="swing-layout-0.9.jar jrs.jar"/>
+        </manifest>
+        <jar jarfile="${build}/lib/rps-applet.jar" 
+             basedir="${build}/classes" 
+             manifest="${build}/tmp/rps-applet_jar-MANIFEST.MF">
+            <include name="rps/client/**"/>
+            <include name="rps/common/**"/>
+        </jar>
+    </target>
+    
+    <!--
+        Create the rps.war file.
+    -->
+    <target name="war" depends="jar">
+        <war destfile="${build}/lib/rps.war" 
+             webxml="${src}/web/WEB-INF/web.xml">
+          
+            <!-- Server-side files -->
+            <webinf dir="${src}/web/WEB-INF">
+                <exclude name="web.xml"/>
+            </webinf>
+            <lib dir="${jrs.home}/lib">
+                <include name="jrs.jar"/>
+            </lib>
+            <classes dir="${build}/classes">
+                <include name="rps/server/**"/>
+                <include name="rps/common/**"/>
+            </classes>
+            <fileset dir="${src}/web">
+                <exclude name="WEB-INF/**"/>
+            </fileset>
+            
+            <!-- Client-side files -->
+            <fileset dir="${build}/lib">
+                <include name="rps-applet.jar"/>
+            </fileset>
+            <fileset dir="${lib}">
+                <include name="swing-layout-0.9.jar"/>
+            </fileset>
+            <fileset dir="${jrs.home}/lib">
+                <include name="jrs.jar"/>
+            </fileset>
+        </war>
+    </target>
+
+    <!--
+    <target name="run-rps-client" depends="war">
+        <java classname="rps.RPSClient"
+              fork="true"
+              failonerror="true">
+            <classpath>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/jrs.jar"/>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/swing-layout-0.9.jar"/>
+            </classpath>
+        </java>
+    </target>
+    -->
+    
+    <condition property="sjsas">
+      <isset property="as.home"/>
+    </condition>
+    
+    <!--
+        Deploy the rps.war file to the Sun Java Systems Application Server.
+    -->
+    <target name="deploy-rps-sjsas" depends="war" if="sjsas">
+        <exec executable="${as.home}/bin/asadmin" failonerror="true" >
+            <arg line="deploy --user ${as.admin.user} --passwordfile ${as.admin.passwordfile} --host ${as.admin.host} --port ${as.admin.port} --echo=true --interactive=false --contextroot /rps --force=true --verify=false --name rps --upload=false ${build}/lib/rps.war"/>
+        </exec>
+    </target>
+    
+    <condition property="tomcat">
+      <isset property="catalina.home"/>
+    </condition>
+    
+    <!--
+        Deploy the rps.war file to the Tomcat web server.
+    -->
+    <target name="deploy-rps-tomcat" depends="war" if="tomcat">
+        <echo message="deploy-rps-tomcat task in not implemented yet."/>
+        <!-- TO DO: unjar war file in tomcat webapps dir? -->
+    </target>
+    
+    <condition property="none">
+      <not>
+        <or>
+          <isset property="sjsas"/>
+          <isset property="tomcat"/>
+        </or>
+      </not>
+    </condition>
+    
+    <!--
+        Print a message instructing the user to manually deploy the rps.war file.
+    -->
+    <target name="deploy-rps-none" depends="war" if="none">
+        <echo>
+            War file is built. Use your web container's deployment tool to deploy
+            the war file at '${build}/lib/rps.war'
+        </echo>
+    </target>
+    
+    <!--
+        Deploy the rps.war file to the web container specified by the properties
+        in the build.properties file.
+    -->
+    <target name="deploy-rps" depends="deploy-rps-sjsas, deploy-rps-tomcat, deploy-rps-none"/>
+    
+    <!--
+        Launch a web browser using the command specified in the build.properties
+        file and launch the RPS client applet.
+    -->
+    <target name="run-rps-applet-browser" if="browserCommand">
+        <exec executable="${browserCommand}">
+            <arg line="http://localhost:8080/rps/Game.jsp"/>
+        </exec>
+    </target>
+    
+    <!--
+        Print a message instructing the user to manually open a browser window
+        and launch the RPS client applet.
+    -->
+    <target name="run-rps-applet-none" unless="browserCommand">
+        <echo>
+            Open http://localhost:8080/rps/Game.jsp in a browser to launch the 
+            RPS client.
+        </echo>
+    </target>
+    
+    <!--
+        Launch the RPS client applet in a browser according to the properties
+        specified in the build.properties file.
+    -->
+    <target name="run-rps-applet" depends="run-rps-applet-browser, run-rps-applet-none"/>
+    
+    <!--
+        Deploy the rps.war file and launch the RPS client applet in a browser
+        according to the properties specified in the build.properties file.
+    -->
+    <target name="run-rps" depends="deploy-rps, run-rps-applet"/>
+    
+</project>

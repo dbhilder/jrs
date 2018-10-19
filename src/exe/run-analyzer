@@ -1,0 +1,6 @@
+#!/bin/sh
+
+base=`dirname $0`
+base=`cd $base; pwd`
+
+java -cp ${base}/../lib/jrs-analyzer.jar jrs.analyzer.RankingServiceAnalyzer

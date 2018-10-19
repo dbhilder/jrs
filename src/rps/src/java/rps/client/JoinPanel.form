@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <Properties>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[450, 500]"/>
+    </Property>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[450, 500]"/>
+    </Property>
+  </Properties>
+  <AuxValues>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jScrollPane1" alignment="0" pref="410" max="32767" attributes="0"/>
+                          <Component id="jLabel3" alignment="0" min="-2" pref="410" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="playerRatingLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="160" max="32767" attributes="0"/>
+                              <Component id="leaderboardButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="137" max="-2" attributes="0"/>
+                      <Component id="joinButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="gatherButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="playerRatingLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="leaderboardButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="348" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="joinButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="gatherButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Palatino" size="36" style="3"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="Rock, Paper, Scissors"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="joinButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Join"/>
+        <Property name="name" type="java.lang.String" value="joinButton"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="joinButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="gatherButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Gather"/>
+        <Property name="name" type="java.lang.String" value="gatherButton"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gatherButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+      <Properties>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[441, 700]"/>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JList" name="gatheringGamesList">
+          <Properties>
+            <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
+              <StringArray count="3">
+                <StringItem index="0" value="&lt;html&gt;&lt;b&gt;Game One&lt;/b&gt; (ave. rating: 1500 +/- 350)&lt;br&gt;&lt;font size=-2&gt;max. players: 4, games ends after 5 minutes&lt;/font&gt;&lt;br&gt;&lt;i&gt;Players:&lt;/i&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Player1 (1500+/-350)&lt;/td&gt;&lt;td&gt;Player2 (1500+/-350)&lt;/td&gt;&lt;td&gt;Player3 (1500+/-350)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Player4 (1500+/-350)&lt;/td&gt;&lt;/tr&gt;&lt;/html&gt;"/>
+                <StringItem index="1" value="&lt;html&gt;&lt;b&gt;Game Two&lt;/b&gt; (ave. rating: 1500 +/- 350)&lt;br&gt;&lt;font size=-2&gt;max. players: 4, games ends after 5 minutes&lt;/font&gt;&lt;br&gt;&lt;i&gt;Players:&lt;/i&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Player1 (1500+/-350)&lt;/td&gt;&lt;td&gt;Player2 (1500+/-350)&lt;/td&gt;&lt;td&gt;Player3 (1500+/-350)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Player4 (1500+/-350)&lt;/td&gt;&lt;/tr&gt;&lt;/html&gt;"/>
+                <StringItem index="2" value="&lt;html&gt;&lt;b&gt;Game Three&lt;/b&gt; (ave. rating: 1500 +/- 350)&lt;br&gt;&lt;font size=-2&gt;max. players: 4, games ends after 5 minutes&lt;/font&gt;&lt;br&gt;&lt;i&gt;Players:&lt;/i&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Player1 (1500+/-350)&lt;/td&gt;&lt;td&gt;Player2 (1500+/-350)&lt;/td&gt;&lt;td&gt;Player3 (1500+/-350)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Player4 (1500+/-350)&lt;/td&gt;&lt;/tr&gt;&lt;/html&gt;"/>
+              </StringArray>
+            </Property>
+            <Property name="selectionMode" type="int" value="0"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="playerRatingLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Player4: 1500 +/- 350"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="leaderboardButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Leader Board"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="leaderboardButtonActionPerformed"/>
+      </Events>
+    </Component>
+  </SubComponents>
+</Form>

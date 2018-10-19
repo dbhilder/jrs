@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!--
+ Copyright 2002, 2003 Sun Microsystems, Inc. All Rights Reserved.
+-->
+<web-app>
+    <display-name>RPS</display-name>
+    <description>A sample game of rock, paper, scissors that demonstrates the use of the Java Ranking Service.</description>
+  <servlet>
+    <servlet-name>RPS Servlet</servlet-name>
+    <description>The server component of the Rock, Paper, Scissors sample game.</description>
+    <servlet-class>rps.server.RPSServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RPS Servlet</servlet-name>
+    <url-pattern>/server/*</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>

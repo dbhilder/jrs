@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jrs" default="package" basedir=".">
+
+    <property file="${basedir}/build.properties"/>
+  
+    <property name="lib" value="${basedir}/lib"/>
+    <property name="src" value="${basedir}/src"/>
+    <property name="build" value="${basedir}/build"/>
+    <property name="dist" value="${basedir}/dist"/>
+
+    
+    <!--
+        Clear the build artifacts.
+    -->
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+
+    <!--
+        Compile the JRS classes, and the unit test classes.
+    -->
+    <target name="compile">
+
+        <mkdir dir="${build}/classes"/>
+
+        <javac srcdir="${src}/java" 
+               destdir="${build}/classes" 
+               debug="on" deprecation="off" source="1.4">
+            <classpath>
+                <pathelement location="${lib}/swing-layout-0.9.jar"/>
+                <!--<pathelement location="${lib}/j2ee.jar"/>-->
+            </classpath>
+        </javac>
+
+        <javac srcdir="${src}/test" 
+               destdir="${build}/classes" 
+               debug="on" deprecation="off" source="1.4">
+            <classpath>
+                <pathelement location="${lib}/junit-3.8.1.jar"/>
+            </classpath>
+        </javac>
+        
+    </target>
+
+    <!--
+        Generate the JavaDoc for the JRS classes.
+    -->
+    <target name="docs" depends="compile">
+        
+        <javadoc destdir="${build}/docs/api"
+                 source="1.4"
+                 access="protected"
+                 private="false"
+                 package="false"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="Java Ranking Service API">
+
+            <packageset dir="${src}/java" defaultexcludes="yes">
+                <include name="jrs/**"/>
+                <exclude name="jrs/analyzer/**"/>
+                <exclude name="jrs/*Test*"/>
+            </packageset>
+
+            <doctitle><![CDATA[<h1>Test</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2005 Dummy Corp. All Rights Reserved.</i>]]></bottom>
+            <tag name="todo" scope="all" description="To do:"/>
+            <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+        </javadoc>
+        
+    </target>
+    
+    <!--
+        Create the jrs.jar and jrs-analyzer.jar files.
+    -->
+    <target name="jar" depends="compile">
+        
+        <mkdir dir="${build}/lib"/>
+        <mkdir dir="${build}/tmp"/>
+        
+        <!-- jrs.jar -->
+        <jar jarfile="${build}/lib/jrs.jar" 
+             basedir="${build}/classes">
+            <include name="jrs/**"/>
+            <exclude name="**/*Test*"/>
+            <exclude name="jrs/analyzer/**"/>
+        </jar>
+        
+        <!-- jrs-analyzer.jar -->
+        <manifest file="${build}/tmp/jrs-analyzer_jar-MANIFEST.MF">
+            <attribute name="Manifest-Version" value="1.0"/>
+            <attribute name="Class-Path" value="swing-layout-0.9.jar jrs.jar"/>
+        </manifest>
+        <jar jarfile="${build}/lib/jrs-analyzer.jar" 
+             basedir="${build}/classes" 
+             manifest="${build}/tmp/jrs-analyzer_jar-MANIFEST.MF">
+            <include name="jrs/analyzer/**"/>
+        </jar>
+
+    </target>
+
+    <!--
+        Create a distributable directory containing everything a game server
+        developer would need to use the JRS.
+    -->
+    <target name="dist" depends="jar, docs">
+        
+        <mkdir dir="${dist}/jrs-${jrs-version}/exe"/>
+        <copy file="${src}/exe/run-analyzer" 
+              tofile="${dist}/jrs-${jrs-version}/exe/run-analyzer"/>
+
+        <mkdir dir="${dist}/jrs-${jrs-version}/docs"/>
+        <copy todir="${dist}/jrs-${jrs-version}/docs">
+            <fileset dir="${build}/docs"/>
+            <fileset dir="${src}/docs"/>
+        </copy>
+
+        <mkdir dir="${dist}/jrs-${jrs-version}/lib"/>
+        <copy todir="${dist}/jrs-${jrs-version}/lib">
+            <fileset dir="${build}/lib">
+                <include name="jrs.jar"/>
+                <include name="jrs-analyzer.jar"/>
+                <!--<include name="rps.war"/>-->
+            </fileset>
+            <fileset dir="${lib}">
+                <include name="swing-layout-0.9.jar"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${dist}/jrs-${jrs-version}/rps">
+            <fileset dir="${src}/rps"/>
+        </copy>
+    </target>
+
+    <!-- 
+        Create a zip file of the distribution directory.
+    -->
+    <target name="package" depends="dist">
+        <ant dir="${dist}/jrs-${jrs-version}/rps" antfile="build.xml" target="clean" inheritall="false"/>
+        <zip destfile="${dist}/jrs-${jrs-version}.zip"
+             basedir="${dist}"
+             includes="jrs-${jrs-version}/**"/>
+    </target>
+    
+    <!--
+        If the junit-3.8.1.jar file is not in your CLASSPATH environment variable,
+        then the run-unit-tests target will not work. Instead, invoke this target,
+        which will set up the correct environment, then run the run-unit-tests target.
+    -->
+    <target name="test" description="Runs JUnit tests in the correct environment.">
+        <exec executable="ant">
+            <env key="CLASSPATH" path="${lib}/junit-3.8.1.jar"/>
+            <arg line="run-unit-tests"/>
+        </exec>
+    </target>
+
+    <!--
+        Run the unit tests. Note, this target assumes the junit-3.8.1.jar file
+        included in the workspace is in the CLASSPATH environment variable.
+    -->
+    <target name="run-unit-tests" depends="dist">
+        <junit printsummary="yes"
+               fork="yes"
+               haltonfailure="yes"
+               showoutput="yes">
+            <classpath>
+                <pathelement location="${build}/classes"/>
+            </classpath>
+            <formatter type="plain" usefile="false"/>
+            <test name="jrs.RankingServiceTest"/>
+        </junit>
+    </target>
+
+    <!-- 
+        Run the Analyzer tool.
+    -->
+    <target name="run-analyzer" depends="dist">
+        <java classname="jrs.analyzer.RankingServiceAnalyzer"
+              fork="true"
+              failonerror="true">
+            <classpath>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/jrs.jar"/>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/jrs-analyzer.jar"/>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/swing-layout-0.9.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <!--
+        Launch the Analyzer tool and listen for the debugger to attach.
+    -->
+    <target name="debug-analyzer" depends="dist">
+        <echo message="Listening for debugger connection on port 1044."/>
+        <java classname="jrs.analyzer.RankingServiceAnalyzer"
+              fork="true"
+              failonerror="true">
+            <jvmarg line="-enableassertions -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=y"/>
+            <classpath>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/jrs.jar"/>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/jrs-analyzer.jar"/>
+                <pathelement location="${dist}/jrs-${jrs-version}/lib/swing-layout-0.9.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <!--
+        Deploy the RPS web application and launch a browser to run the RPS client 
+        applet in.
+    -->
+    <target name="run-rps" depends="dist">
+        <ant dir="${dist}/jrs-${jrs-version}/rps" antfile="build.xml" target="run-rps" inheritall="false"/>
+    </target>
+
+</project>
